@@ -1,0 +1,48 @@
+flowchart TD
+    Start([Incoming WhatsApp Message]) --> S0{State 0: Detect Language}
+    S0 -->|Contains Arabic script| ArFlag[Set lang = AR]
+    S0 -->|No Arabic script| EnFlag[Set lang = EN]
+    ArFlag --> S1
+    EnFlag --> S1
+
+    S1[State 1: Greeting + Intent<br/>Book appointment OR Ask a question?] --> IntentCheck{User Intent}
+
+    IntentCheck -->|Books appointment| S2
+    IntentCheck -->|Asks a question| FAQ[Answer from FAQ list]
+    FAQ --> S1
+
+    IntentCheck -->|Medical/health question,<br/>complaint, price negotiation,<br/>or off-script message| Handoff
+
+    S2[State 2: Service<br/>Which service? Cleaning / Whitening /<br/>Checkup / Braces consult / Extraction] --> S3
+    S3[State 3: Timing<br/>When would you like your appointment?] --> S4
+    S4[State 4: Offer Slots<br/>Bot offers 3 mock available slots<br/>pulled from calendar - Phase 2 will connect real calendar] --> SlotCheck{Slot chosen?}
+
+    SlotCheck -->|Yes| S5
+    SlotCheck -->|None work / user unsure| S3
+
+    S5[State 5: Confirm<br/>Send booking summary:<br/>service + date + time] --> End([Booking Complete])
+
+    S1 -.silence after any state.-> Nudge1
+    S2 -.silence.-> Nudge1
+    S3 -.silence.-> Nudge1
+    S4 -.silence.-> Nudge1
+
+    Nudge1[Nudge +1h<br/>Free-form message<br/>within 24h window] --> Reply1{User replies?}
+    Reply1 -->|Yes| Resume[Resume at last state]
+    Reply1 -->|No| Nudge24
+
+    Nudge24[Nudge +24h<br/>MUST be a pre-approved<br/>WhatsApp Template message] --> Reply2{User replies?}
+    Reply2 -->|Yes| Resume
+    Reply2 -->|No| Nudge72
+
+    Nudge72[Nudge +72h<br/>MUST be a pre-approved<br/>WhatsApp Template message] --> Reply3{User replies?}
+    Reply3 -->|Yes| Resume
+    Reply3 -->|No| Lost[Mark as LOST]
+
+    Handoff[Human Handoff<br/>Bot stops, routes to human agent<br/>Triggers: medical/health, complaint,<br/>price negotiation, off-script] --> HumanAgent([Human takes over])
+
+    style Handoff fill:#ffcccc
+    style Nudge24 fill:#fff3cd
+    style Nudge72 fill:#fff3cd
+    style Lost fill:#e0e0e0
+    style End fill:#d4edda

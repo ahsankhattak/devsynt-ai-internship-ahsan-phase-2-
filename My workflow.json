@@ -1,0 +1,124 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "156a3cc8-a9f8-440e-aa91-5b1338f8e1ee",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2c8de0c9-0eae-4597-92d4-cf6cc63e193a",
+      "name": "Webhook",
+      "webhookId": "156a3cc8-a9f8-440e-aa91-5b1338f8e1ee"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "517994f2-fd4b-4016-9c97-672ad7b296c8",
+              "leftValue": "={{ $json.query[\"hub.verify_token\"] }}",
+              "rightValue": "brightsmile123",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7d87e430-3a75-4789-8a44-694df4bdbba9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Webhook').item.json.query[\"hub.challenge\"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "0851ed93-e484-4daa-a37a-08ff37fd4645",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "156a3cc8-a9f8-440e-aa91-5b1338f8e1ee",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -352,
+        208
+      ],
+      "id": "c66becb8-564c-4388-8b3e-13f6a82a0d64",
+      "name": "Webhook1",
+      "webhookId": "5002ad3e-4a18-4570-a869-5900db874c37"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f2b05edd-ae08-46f8-ae62-dfe2665c5be7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bb80f6efc487ae62f0f735a22d34ed2cd12bfb5ce8582a2b88d2991630aa1ccd"
+  },
+  "nodeGroups": [],
+  "id": "SOhDg2sesj3aQurb",
+  "tags": []
+}
